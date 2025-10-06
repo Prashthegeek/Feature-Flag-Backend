@@ -22,9 +22,9 @@ export const initializeFeatureFlagTable = async() =>{
 }
 
 // Insert new flag
-export const insertFlag = async ({ name, description, rolloutPercentage }) => {
+export const insertFlag = async ({ name, description, rolloutPercentage }) => {//js ke time me camelCase use , db ke time me snake_case use(but,mapping sahi se karna)
   const query = `
-    INSERT INTO feature_flags (name, description, rollout_percentage)
+    INSERT INTO feature_flag(name, description, rollout_percentage)
     VALUES ($1, $2, $3)
     RETURNING *;
   `;
