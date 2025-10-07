@@ -46,3 +46,41 @@ export const findWithId = async(_id) =>{
         const result = await pool.query(query, [_id]) //now,this [] contains _id so, $1 will be _id in the upper query
         return result.rows[0] 
 }
+
+
+export const updateFlag = async(id , filteredObj) =>{
+    const keys = Object.keys(filteredObj) //returns an array 
+
+    if(keys.length == 0) {
+        throw new Error('no fields to update') //handled by try-catch of calling func
+    }
+    //if i want to use $1 ,$2 in the query then -> i need to have keys and their corresponding values in an ordered format 
+    //currently, we have  filteredObj (object) (where order doesn't matter) , so ,create array of both keys and values (keys already done)
+    const values = Object.values(filteredObj)
+
+
+    //suppose filteredObj = {name :'prash' , description : 'anything'}
+    // UPDATE feature_flag
+    // SET  name=${1} , description={$2}, updated_at = CURRENT_TIMESTAMP
+    //so,this is the update function we want to have 
+
+    //while running query , seocnd arguemnt which contains an array (ex-> await pool.query(query , [this array must have values which will be pointed as $1 and $2 in query string]
+    // so,this can be done using -> values array we have 
+
+    //but, issue, is in query string -> how can i have -> name= ${1} and description={2} ,because ,i don't know ki filteredObj me yahi dono
+    //field hai ya kuchh aur , so, craete dynamic set clause like ->   "name = $1, is_active = $2"
+
+    const setClause = keys.map((key, idx) =>{
+        return `${key}=$${idx+1}`
+    }).join(",") //finally, setClause = name = $1, is_active = $2 (string format )
+   
+
+    const query = `
+        update feature_flag set ${setClause} , updated_at = current_timestamp where id= $${values.length +1} 
+        Returning * 
+    ` ;  //RETURNING *, we are instructing PostgreSQL to return all the  updated rows or all the selected rows (depends on the query which it run ,all the affected rows will be returned in an array format ).
+
+    const result = await pool.query(query , [...values , id]) 
+    return result.rows[0] 
+
+}
