@@ -33,3 +33,9 @@ export const insertFlag = async ({ name, description, rolloutPercentage }) => {/
   return result.rows[0];
 };
 
+export const getAllFlag = async() =>{
+    const query = `select * from feature_flag`;
+    const result = await pool.query(query) ; 
+    return result.rows 
+}
+
