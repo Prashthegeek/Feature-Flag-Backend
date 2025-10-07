@@ -29,7 +29,7 @@ export const insertFlag = async ({ name, description, rolloutPercentage }) => {/
     RETURNING *;
   `;
   const values = [name, description, rolloutPercentage];
-  const result = await pool.query(query, values);
+  const result = await pool.query(query, values);  //upar me $1,$2,$3 values are taken from values array
   return result.rows[0];
 };
 
@@ -39,3 +39,10 @@ export const getAllFlag = async() =>{
     return result.rows 
 }
 
+
+//find a particular flag 
+export const findWithId = async(_id) =>{
+        const query = 'select * from feature_flag where id=$1';
+        const result = await pool.query(query, [_id]) //now,this [] contains _id so, $1 will be _id in the upper query
+        return result.rows[0] 
+}
