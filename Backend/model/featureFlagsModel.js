@@ -50,6 +50,7 @@ export const findWithId = async(_id) =>{
 
 export const updateFlag = async(id , filteredObj) =>{
     const keys = Object.keys(filteredObj) //returns an array 
+  
 
     if(keys.length == 0) {
         throw new Error('no fields to update') //handled by try-catch of calling func
@@ -82,5 +83,4 @@ export const updateFlag = async(id , filteredObj) =>{
 
     const result = await pool.query(query , [...values , id]) 
     return result.rows[0] 
-
 }

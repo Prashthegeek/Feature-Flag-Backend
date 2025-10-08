@@ -3,16 +3,17 @@
   "version": "1.0.0",
   "description": "feature flag backend",
   "main": "index.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "test": "node index.js",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "redis": "^5.8.3"
   },
