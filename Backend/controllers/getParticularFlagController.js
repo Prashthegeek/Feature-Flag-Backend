@@ -25,9 +25,8 @@ export const getParticularFlag  =async(req, res) =>{
         if(!result){
             //console.log("no flag with this id exist")
             const mes = "no flag with this id exist"
-            await redisClient.set(cacheKey , JSON.stringify({mes:"no flag with this id exist"})) //save in json format(and caps me JSON hota hai)
-            await redisClient.expire(cacheKey , 60) //expire after 60 sec(ttl)
             return res.status(200).json({message:mes})
+            //don't cache it  (as we are not invalidating redis data incase ,same record inserted) , so, if redis caches this -> then no records found msg till it expires
         }
 
         //set in redis
