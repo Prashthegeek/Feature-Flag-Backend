@@ -1,5 +1,5 @@
 import {updateFlag} from '../model/featureFlagsModel.js'
-
+import redisClient from '../config/redisConfig.js'
 export const updateParticularFlag = async(req, res) =>{
     let {name , description , is_active , rollout_percentage } = req.body 
 
@@ -12,16 +12,24 @@ export const updateParticularFlag = async(req, res) =>{
     
     const filteredObj = {} ;
     for(const key in obj){
-        if(obj[key] !== undefined || obj[key] !==null){
+        if(obj[key] !== undefined){
             filteredObj[key] = obj[key]
         }
     }
+
+
     //find the id from the path
     // const {id} = req.params;
     const id = parseInt(req.params?.id, 10);
     try{
         //now call the function to update with valid values 
         const result = await updateFlag(id , filteredObj)
+        //change the cached value if present in redis for this flag
+        const cacheKey = `flag:${id}`
+        await redisClient.del(cacheKey) ; //i can even set new values (but ,leave it)
+        //also set new values in redis 
+        await redisClient.set(cacheKey, JSON.stringify(result))
+        await redisClient.expire(cacheKey, 60) //60 sec
         return res.status(200).json({message:`field updated for id = ${id}` , flag:result})
     }
     catch(err){
