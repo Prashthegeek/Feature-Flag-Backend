@@ -11,15 +11,13 @@ export const getAllFlagController= async(req, res ) =>{
         const result = await getAllFlag() 
         // console.log(result) //return array of flags
         if(result.length == 0){
-            //store in redis as well
             const mes  = 'there are no flags in the table'
-            await redisClient.set('flag:all' ,JSON.stringify(mes)) 
-            await redisClient.expire('flag:all' , 60) //expires in 60 sec
-           return res.status(200).json({message:mes}) 
+           return res.status(200).json({message:mes})
+           //don't cache it  (as we are not invalidating redis data incase ,same record inserted) , so, if redis caches this -> then no records found msg till it expires
         } 
         else {
-            await redisClient.set('flag:all' ,JSON.stringify(result)) //stored object of arrays in the json format
-            await redisClient.expire('flag:all' , 60)
+            await redisClient.set(cacheKey ,JSON.stringify(result)) //stored object of arrays in the json format
+            await redisClient.expire(cacheKey , 60)
             return res.status(200).json({flags:result}) //result -> object of array
         }
     }
