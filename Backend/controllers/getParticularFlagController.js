@@ -19,20 +19,20 @@ export const getParticularFlag  =async(req, res) =>{
 
         //get from db 
         const result = await findWithId(_id)
-        console.log(result)  
+        // console.log(result)  
 
         //in case -> result is empty -> means-> no row with this id exist
         if(!result){
             //console.log("no flag with this id exist")
             const mes = "no flag with this id exist"
-            redisClient.set('cacheKey' , JSON.stringify({mes:"no flag with this id exist"})) //save in json format(and caps me JSON hota hai)
-            redisClient.expire('cacheKey' , 60) //expire after 60 sec(ttl)
+            await redisClient.set(cacheKey , JSON.stringify({mes:"no flag with this id exist"})) //save in json format(and caps me JSON hota hai)
+            await redisClient.expire(cacheKey , 60) //expire after 60 sec(ttl)
             return res.status(200).json({message:mes})
         }
 
         //set in redis
-        redisClient.set('cacheKey' , JSON.stringify(result)) //save in json format(and caps me JSON hota hai)
-        redisClient.expire('cacheKey' , 60) //expire after 60 sec(ttl)
+        redisClient.set(cacheKey , JSON.stringify(result)) //save in json format(and caps me JSON hota hai)
+        redisClient.expire(cacheKey , 60) //expire after 60 sec(ttl)
         return res.status(200).json({flag:result})
     }
     catch(err){
