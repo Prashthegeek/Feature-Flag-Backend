@@ -22,13 +22,13 @@ export const initializeFeatureFlagTable = async() =>{
 }
 
 // Insert new flag
-export const insertFlag = async ({ name, description, rolloutPercentage }) => {//js ke time me camelCase use , db ke time me snake_case use(but,mapping sahi se karna)
+export const insertFlag = async ({ name, description, rollout_percentage }) => {//js ke time me camelCase use , db ke time me snake_case use(but,mapping sahi se karna)
   const query = `
     INSERT INTO feature_flag(name, description, rollout_percentage)
     VALUES ($1, $2, $3)
     RETURNING *;
   `;
-  const values = [name, description, rolloutPercentage];
+  const values = [name, description, rollout_percentage];
   const result = await pool.query(query, values);  //upar me $1,$2,$3 values are taken from values array
   return result.rows[0];
 };
@@ -52,14 +52,14 @@ export const updateFlag = async(id , filteredObj) =>{
     const keys = Object.keys(filteredObj) //returns an array 
   
 
-    if(keys.length == 0) {
-        throw new Error('no fields to update') //handled by try-catch of calling func
-    }
+    
     //if i want to use $1 ,$2 in the query then -> i need to have keys and their corresponding values in an ordered format 
     //currently, we have  filteredObj (object) (where order doesn't matter) , so ,create array of both keys and values (keys already done)
     const values = Object.values(filteredObj)
 
-
+    if(keys.length == 0 ||values.length==0) {
+        throw new Error('no fields to update') //handled by try-catch of calling func
+    }
     //suppose filteredObj = {name :'prash' , description : 'anything'}
     // UPDATE feature_flag
     // SET  name=${1} , description={$2}, updated_at = CURRENT_TIMESTAMP
@@ -73,7 +73,7 @@ export const updateFlag = async(id , filteredObj) =>{
 
     const setClause = keys.map((key, idx) =>{
         return `${key}=$${idx+1}`
-    }).join(",") //finally, setClause = name = $1, is_active = $2 (string format )
+    }).join(",") //finally, setClause => name = $1, is_active = $2 (string format )
    
 
     const query = `
@@ -83,4 +83,16 @@ export const updateFlag = async(id , filteredObj) =>{
 
     const result = await pool.query(query , [...values , id]) 
     return result.rows[0] 
+}
+
+
+//well, two options -> either delete whole row (hard delete) (but, hard delete won't help in analytics) 
+//soft delete -> just make this flag as inactive ,so ,is_active= false
+export const deleteFlag = async(id) =>{
+    
+    const query = `update feature_flag set is_active= false , updated_at=current_timestamp where id=$1 
+        Returning *;
+    `;  //so, just updating ,
+    const result = await pool.query(query , [id])
+    return result.rows[0] ; //return the affected row
 }

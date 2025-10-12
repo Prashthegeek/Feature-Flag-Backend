@@ -3,6 +3,7 @@ import {createFlagController} from '../controllers/createFlagController.js' //.j
 import {getAllFlagController} from '../controllers/getAllFlagController.js'
 import {getParticularFlag} from '../controllers/getParticularFlagController.js'
 import {updateParticularFlag} from '../controllers/updateParticularFlag.js'
+import { deleteParticularFlag } from '../controllers/deleteParticularFlag.js'
 const router = Router() 
 
 router.post('/' , createFlagController)  //for post req on api -> /flag
@@ -12,5 +13,8 @@ router.get('/:id' , getParticularFlag) //path paramater , so api hit on -> /flag
 //as -> const {something_to_extract} = req.params ; in backend 
 
 router.put('/:id' , updateParticularFlag) //api put req -> /flag/12 , etc ...
+
+router.delete('/:id' , deleteParticularFlag)
 export default router ;  
+
 
