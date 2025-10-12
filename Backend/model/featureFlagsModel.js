@@ -88,11 +88,10 @@ export const updateFlag = async(id , filteredObj) =>{
 
 //well, two options -> either delete whole row (hard delete) (but, hard delete won't help in analytics) 
 //soft delete -> just make this flag as inactive ,so ,is_active= false
-export const deleteFlag = async(id) =>{
-    
-    const query = `update feature_flag set is_active= false , updated_at=current_timestamp where id=$1 
+export const deleteFlag = async(id) =>{  
+    const query = `update feature_flag set is_active= false , updated_at=current_timestamp where id=$1 AND is_active = true
         Returning *;
-    `;  //so, just updating ,
+    `;  //so, just updating ,if already is_active is false (then->dont give success message)
     const result = await pool.query(query , [id])
     return result.rows[0] ; //return the affected row
 }
