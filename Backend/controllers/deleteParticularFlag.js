@@ -14,8 +14,12 @@ export const deleteParticularFlag = async(req, res) =>{
         }
         //delete stored instance of this flag from redis
         const cacheKey = `flag:${id}`
-        const cacheRes = await redisClient.del(cacheKey) //throws no error even if not present in redis
-        //don't cache again in case of delete (my rule)
+        await redisClient.del(cacheKey) //throws no error even if not present in redis
+
+        //also invalidate the flag:all (cache to store whole table)(since, a record deleted from table ), so -> invalidate already stored table in redis
+        const wholeTableCacheKey = `flag:all` ;
+        await redisClient.del(wholeTableCacheKey); //even if this cache not there in redis, still no error thrown
+
         return res.status(200).json({message:`flag with id->${id} has been deactivated`, flag:result})
     }catch(err){
         console.log(err.stack)
