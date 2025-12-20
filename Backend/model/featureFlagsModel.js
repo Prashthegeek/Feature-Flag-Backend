@@ -12,6 +12,7 @@ export const initializeFeatureFlagTable = async() =>{
             description text,
             rollout_percentage int check(rollout_percentage >=0 and rollout_percentage<=100),
             is_active boolean default true,
+            is_deleted boolean default false, 
             created_at timestamp default current_timestamp,
             updated_at timestamp default current_timestamp 
         );
@@ -22,7 +23,7 @@ export const initializeFeatureFlagTable = async() =>{
 }
 
 // Insert new flag
-export const insertFlag = async ({ name, description, rollout_percentage }) => {//js ke time me camelCase use , db ke time me snake_case use(but,mapping sahi se karna)
+export const insertFlag = async ({ name, description, rollout_percentage }) => {
   const query = `
     INSERT INTO feature_flag(name, description, rollout_percentage)
     VALUES ($1, $2, $3)
@@ -43,16 +44,14 @@ export const getAllFlag = async() =>{
 //find a particular flag 
 export const findWithId = async(_id) =>{
         const query = 'select * from feature_flag where id=$1';
-        const result = await pool.query(query, [_id]) //now,this [] contains _id so, $1 will be _id in the upper query
+        const result = await pool.query(query, [_id]) //now,this [] contains _id so, $1 will be _id in the upper query(not $0)
         return result.rows[0] 
 }
 
 
 export const updateFlag = async(id , filteredObj) =>{
-    const keys = Object.keys(filteredObj) //returns an array 
-  
+    const keys = Object.keys(filteredObj) //returns an array with all keys
 
-    
     //if i want to use $1 ,$2 in the query then -> i need to have keys and their corresponding values in an ordered format 
     //currently, we have  filteredObj (object) (where order doesn't matter) , so ,create array of both keys and values (keys already done)
     const values = Object.values(filteredObj)
@@ -73,7 +72,7 @@ export const updateFlag = async(id , filteredObj) =>{
 
     const setClause = keys.map((key, idx) =>{
         return `${key}=$${idx+1}`
-    }).join(",") //finally, setClause => name = $1, is_active = $2 (string format )
+    }).join(",") //finally, setClause => name = $1, is_active = $2 (string format because of join)
    
 
     const query = `
