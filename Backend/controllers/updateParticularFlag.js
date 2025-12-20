@@ -26,10 +26,18 @@ export const updateParticularFlag = async(req, res) =>{
         const result = await updateFlag(id , filteredObj)
         //change the cached value if present in redis for this flag
         const cacheKey = `flag:${id}`
-        await redisClient.del(cacheKey) ; //i can even set new values (but ,leave it)
+        await redisClient.del(cacheKey) ; 
         //also set new values in redis 
         await redisClient.set(cacheKey, JSON.stringify(result))
         await redisClient.expire(cacheKey, 60) //60 sec
+        
+
+        //also invalidate the flag:all (cache to store whole table)(since, records updated ), so -> invalidate already stored table
+        const wholeTableCache = `flag:all` ;
+        await redisClient.del(wholeTableCache); //even if this cache not there in redis, still no error thrown
+
+
+        //finally , return the updated record
         return res.status(200).json({message:`field updated for id = ${id}` , flag:result})
     }
     catch(err){
