@@ -6,7 +6,7 @@ export const getAllFlagController= async(req, res ) =>{
         const cacheRes = await redisClient.get(cacheKey) //cacheKey will be a json
         if(cacheRes){
             console.log("cache hit")
-            return res.status(200).json({flags:JSON.parse(cacheRes)}) //so,convert json to object and then -> again send in the form of json(becoz of .json)
+            return res.status(200).json({flags:JSON.parse(cacheRes)}) //so,convert json to object and then -> again send in the form of json(becoz of .json) , actually we need .json(obj)
         }
         const result = await getAllFlag() 
         // console.log(result) //return array of flags
@@ -18,7 +18,7 @@ export const getAllFlagController= async(req, res ) =>{
         else {
             await redisClient.set(cacheKey ,JSON.stringify(result)) //stored object of arrays in the json format
             await redisClient.expire(cacheKey , 60)
-            return res.status(200).json({flags:result}) //result -> object of array
+            return res.status(200).json({flags:result}) //result -> object of array , .json(obj)
         }
     }
     catch(e){
