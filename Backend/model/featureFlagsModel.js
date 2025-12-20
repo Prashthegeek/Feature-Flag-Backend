@@ -76,7 +76,7 @@ export const updateFlag = async(id , filteredObj) =>{
    
 
     const query = `
-        update feature_flag set ${setClause} , updated_at = current_timestamp where id= $${values.length +1} 
+        update feature_flag set ${setClause} , updated_at = current_timestamp where id= $${values.length +1} And is_deleted = false
         Returning * 
     ` ;  //RETURNING *, we are instructing PostgreSQL to return all the  updated rows or all the selected rows (depends on the query which it run ,all the affected rows will be returned in an array format ).
 
@@ -86,11 +86,12 @@ export const updateFlag = async(id , filteredObj) =>{
 
 
 //well, two options -> either delete whole row (hard delete) (but, hard delete won't help in analytics) 
-//soft delete -> just make this flag as inactive ,so ,is_active= false
+//soft delete -> just make this flag as inactive ,so ,is_active= false and also make is_deleted = true (so, afterwards no one can update it)
 export const deleteFlag = async(id) =>{  
-    const query = `update feature_flag set is_active= false , updated_at=current_timestamp where id=$1 AND is_active = true
+    const query = `update feature_flag set is_active= false , is_deleted = true, updated_at=current_timestamp where id=$1 AND is_deleted = false 
         Returning *;
     `;  //so, just updating ,if already is_active is false (then->dont give success message)
     const result = await pool.query(query , [id])
-    return result.rows[0] ; //return the affected row
+    return result.rows[0] ; 
 }
+
