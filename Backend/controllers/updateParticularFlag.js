@@ -33,8 +33,8 @@ export const updateParticularFlag = async(req, res) =>{
         
 
         //also invalidate the flag:all (cache to store whole table)(since, records updated ), so -> invalidate already stored table
-        const wholeTableCache = `flag:all` ;
-        await redisClient.del(wholeTableCache); //even if this cache not there in redis, still no error thrown
+        const wholeTableCacheKey = `flag:all` ;
+        await redisClient.del(wholeTableCacheKey); //even if this cache not there in redis, still no error thrown
 
 
         //finally , return the updated record
