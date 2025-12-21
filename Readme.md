@@ -211,6 +211,6 @@ Marks a flag as deleted without removing it permanently.
 
 4.  **Start the Server:**
     ```bash
-    node index.js
+    node server.js
     ```
     *Server runs on `http://localhost:5000`*
