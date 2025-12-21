@@ -39,7 +39,7 @@ export const getAllFlag = async() =>{
     const result = await pool.query(query) ; 
     return result.rows 
 }
-
+  
 
 //find a particular flag 
 export const findWithId = async(_id) =>{

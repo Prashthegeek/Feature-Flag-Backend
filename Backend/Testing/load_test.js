@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-// Simulate 50 users for 30 seconds
+// Simulating 50 virtual concurrent users for 30 seconds
 export const options = {
   vus: 50,  //simulating 50 users clicking the button at the same time(vus->virtual users)
   duration: '30s', //for 30sec 
