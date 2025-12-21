@@ -8,7 +8,7 @@ export const options = {
 };
 
 export default function () {
-  const url = 'http://localhost:5000/flag/15';  //it is a flag id (which exists the database) 
+  const url = 'http://localhost:5000/flag/3';  //it is a flag id (which exists the database) 
 
   const res = http.get(url);
 
