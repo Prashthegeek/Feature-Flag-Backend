@@ -57,12 +57,16 @@ We stress-tested the API to determine the maximum **Requests Per Second (RPS)** 
 
 #### Benchmark Evidence
 
-**Before Caching (Baseline):**
-![Before Caching Load Test](assets/Performance_before_caching.png)
-
-**After Caching (Optimized):**
-![After Caching Load Test](assets/Performance_after_caching.png)
-
+<table>
+  <tr>
+    <th width="50%">Before Caching (Baseline)</th>
+    <th width="50%">After Caching (Optimized)</th>
+  </tr>
+  <tr>
+    <td><img src="assets/Performance_before_caching.png" alt="Before Caching Result" width="100%"></td>
+    <td><img src="assets/Performance_after_caching.png" alt="After Caching Result" width="100%"></td>
+  </tr>
+</table>
 ---
 
 ## 📡 API Documentation
