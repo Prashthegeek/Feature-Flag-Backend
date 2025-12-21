@@ -1,15 +1,14 @@
 import {findWithId} from '../model/featureFlagsModel.js'
 import redisClient from '../config/redisConfig.js'
 
-
 export const getParticularFlag  =async(req, res) =>{
     try{
         const {id}= req.params ; //req.params is an object ,so destructure it  
         const _id = Number(id) ; //to check if it is number alike or not 
         if(Number.isNaN(_id)) return res.status(400).json({error:'id parameter can only be number'}) //if it is not number,then i cannot query 
-        console.log(_id);
+        //console.log(_id);
         
-        //get from redis
+        // //get from redis
         const cacheKey = `flag:${_id}`
         const cacheRes = await redisClient.get(cacheKey) //cacheRes is now json
         if(cacheRes) {
@@ -18,6 +17,11 @@ export const getParticularFlag  =async(req, res) =>{
         }
 
         //get from db 
+        // 2. The "real world" Simulator(delay before db )
+        // makes the code  to wait 50ms, which makes the scenario  as if db  is in  different city.
+        await new Promise(resolve => setTimeout(resolve, 50)); //this is added just for testing purpose(because in real life ,db -> is away from system, latency)
+        //note -> this delay of 50 ms won't happen if redis cache is hit (so, redis optimisation happens in real life)
+
         const result = await findWithId(_id)
         // console.log(result)  
 
@@ -39,3 +43,5 @@ export const getParticularFlag  =async(req, res) =>{
         return res.status(500).json({error:'issue while fetching a particular flag with the given id'})
     }
 }
+
+
