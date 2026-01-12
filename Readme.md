@@ -188,8 +188,8 @@ Marks a flag as deleted without removing it permanently.
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/feature-flag-backend.git](https://github.com/your-username/feature-flag-backend.git)
-    cd feature-flag-backend
+    git clone https://github.com/Prashthegeek/Feature-Flag-Backend.git
+    cd Feature-Flag-Backend
     ```
 
 2.  **Install dependencies:**
